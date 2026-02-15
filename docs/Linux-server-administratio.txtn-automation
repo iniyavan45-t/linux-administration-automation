@@ -1,0 +1,237 @@
+Perfect question, Iniyavan 👍
+Below is a complete, beginner-friendly, STEP-BY-STEP guide to CREATE this Linux Server Administration & Automation project from scratch, with all required commands.
+You can follow this like a lab manual and do it practically.
+________________________________________
+🐧 Linux Server Administration & Automation
+(Beginner → Intermediate | Hands-On Project Guide)
+________________________________________
+🔹 STEP 1: Set Up Ubuntu Linux Server
+✅ Requirement
+•	Ubuntu 20.04 / 22.04 (VM, EC2, or local machine)
+🔧 Update the system
+sudo apt update
+sudo apt upgrade -y
+📌 Why
+Keeps system secure and stable.
+________________________________________
+🔹 STEP 2: User & Group Management
+➕ Create a new user
+sudo adduser devuser
+➕ Create a group
+sudo groupadd devgroup
+➕ Add user to group
+sudo usermod -aG devgroup devuser
+🔍 Verify
+id devuser
+📌 Why
+Controls access in multi-user servers.
+________________________________________
+🔹 STEP 3: File & Permission Management
+➕ Create a test file
+touch project.txt
+👤 Change owner
+sudo chown devuser:devgroup project.txt
+🔐 Set permissions
+sudo chmod 640 project.txt
+🔍 Verify
+ls -l project.txt
+📌 Why
+Protects sensitive files.
+________________________________________
+🔹 STEP 4: Package Management & Services
+📦 Install Nginx
+sudo apt install nginx -y
+▶ Start service
+sudo systemctl start nginx
+🔁 Enable on reboot
+sudo systemctl enable nginx
+🔍 Check status
+sudo systemctl status nginx
+📌 Why
+Real applications run as services.
+________________________________________
+🔹 STEP 5: Web Server Configuration
+📝 Create website file
+sudo nano /var/www/html/index.html
+✍ Add content
+<h1>Welcome to My Linux Server</h1>
+<p>Linux Server Administration Project</p>
+🌐 Test website
+curl http://localhost
+or open browser:
+http://SERVER_IP
+📌 Why
+Shows real-world hosting skill.
+________________________________________
+🔹 STEP 6: Shell Scripting for Automation
+📁 Create script
+nano sys_monitor.sh
+✍ Paste script
+#!/bin/bash
+
+echo "===== Server Health Report =====" >> /var/log/sys_report.log
+date >> /var/log/sys_report.log
+df -h >> /var/log/sys_report.log
+free -h >> /var/log/sys_report.log
+uptime >> /var/log/sys_report.log
+echo "--------------------------------" >> /var/log/sys_report.log
+🔑 Give execute permission
+chmod +x sys_monitor.sh
+▶ Run script manually
+sudo ./sys_monitor.sh
+🔍 Check log
+cat /var/log/sys_report.log
+📌 Why
+Automates system monitoring.
+________________________________________
+🔹 STEP 7: Cron Job Automation
+🕒 Open cron editor
+crontab -e
+➕ Add this line
+*/30 * * * * /home/iniya/sys_monitor.sh
+📌 Meaning
+•	Runs every 30 minutes
+•	Works 24/7
+🔍 Verify cron
+crontab -l
+📌 Why
+No manual checking needed.
+________________________________________
+🔹 STEP 8: Log Management Using Logrotate
+📁 Create logrotate config
+sudo nano /etc/logrotate.d/sys_report
+✍ Paste config
+/var/log/sys_report.log {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+}
+🔍 Test logrotate
+sudo logrotate -d /etc/logrotate.d/sys_report
+📌 Why
+Prevents disk full issues.
+________________________________________
+🔹 STEP 9: Testing & Validation
+✅ Test user access
+su - devuser
+✅ Check Nginx
+systemctl status nginx
+✅ Verify cron logs
+cat /var/log/sys_report.log
+✅ Check permissions
+ls -l project.txt
+________________________________________
+
+
+Chatgpt link:   https://chatgpt.com/share/693e5d72-80b8-8005-8e83-147ee2f15dad	
+
+We did not complete alert via email in this project because it used in only real linux server not used in wsl and smtp
+
+📧 GOAL
+👉 Send an email alert when disk usage > 80%
+________________________________________
+🔹 STAGE 1: Install Mail Tool (One Time Setup)
+Linux needs a mail program to send emails.
+1️⃣ Install mailutils
+sudo apt update
+sudo apt install mailutils -y
+During installation:
+•	Select Internet Site
+•	Press OK
+•	For system mail name → press ENTER
+✔ Done
+________________________________________
+🔹 Verify mail command
+mail
+If it opens mail prompt → mail is installed correctly.
+Press:
+q
+to exit.
+________________________________________
+🔹 STAGE 2: Test Email (Very Important)
+Before automation, test email manually.
+1️⃣ Send test email
+echo "Test mail from Linux server" | mail -s "Test Email" your_email@gmail.com
+⚠ Replace:
+your_email@gmail.com
+with your real email address
+________________________________________
+2️⃣ Check your email inbox
+•	Check Inbox
+•	Also check Spam
+✔ If mail received → email setup is working
+❌ If not → tell me (I’ll help fix)
+________________________________________
+🔹 STAGE 3: Modify Monitoring Script (Add Alert Logic)
+Now we modify sys_monitor.sh to send email ONLY when disk > 80%.
+________________________________________
+1️⃣ Edit script
+nano sys_monitor.sh
+________________________________________
+2️⃣ Replace script with this (BEGINNER SAFE VERSION)
+#!/bin/bash
+
+LOGFILE="/var/log/sys_report.log"
+EMAIL="your_email@gmail.com"
+THRESHOLD=80
+
+USAGE=$(df / | tail -1 | awk '{print $5}' | sed 's/%//')
+
+echo "===== Server Health Report =====" >> $LOGFILE
+date >> $LOGFILE
+df -h >> $LOGFILE
+free -h >> $LOGFILE
+uptime >> $LOGFILE
+echo "--------------------------------" >> $LOGFILE
+
+if [ "$USAGE" -ge "$THRESHOLD" ]; then
+    echo "WARNING: Disk usage is ${USAGE}% on server $(hostname)" | \
+    mail -s "ALERT: Disk Usage High (${USAGE}%)" $EMAIL
+fi
+________________________________________
+🔍 What this logic does (Simple)
+Line	Meaning
+THRESHOLD=80	Alert limit
+df /	Checks root disk
+USAGE=...	Extracts disk usage number
+if [ "$USAGE" -ge "$THRESHOLD" ]	Checks if usage > 80
+mail -s	Sends email alert
+________________________________________
+3️⃣ Save & Exit
+Press:
+CTRL + O → ENTER → CTRL + X
+________________________________________
+4️⃣ Give execute permission
+chmod +x sys_monitor.sh
+________________________________________
+🔹 STAGE 4: Test Alert Manually
+Run script manually
+sudo ./sys_monitor.sh
+If disk usage is already ≥ 80%, you will receive email.
+✔ Check inbox
+✔ Check spam
+________________________________________
+🔹 STAGE 5: Cron (Already DONE)
+You already have cron:
+*/30 * * * * /home/iniya/sys_monitor.sh
+👉 This means:
+•	Script runs every 30 minutes
+•	Email alert works 24/7
+•	No manual checking
+________________________________________
+🔁 FINAL FLOW (IMPORTANT FOR INTERVIEW)
+Cron runs script every 30 minutes
+          ↓
+Script checks disk usage
+          ↓
+If disk > 80%
+          ↓
+Email alert sent to admin
+          ↓
+Admin takes action
+
+
+
+
