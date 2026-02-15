@@ -1,7 +1,4 @@
-Perfect question, Iniyavan 👍
-Below is a complete, beginner-friendly, STEP-BY-STEP guide to CREATE this Linux Server Administration & Automation project from scratch, with all required commands.
-You can follow this like a lab manual and do it practically.
-________________________________________
+
 🐧 Linux Server Administration & Automation
 (Beginner → Intermediate | Hands-On Project Guide)
 ________________________________________
